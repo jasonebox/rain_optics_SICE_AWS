@@ -1,0 +1,2 @@
+site,t0_melt,t1_melt,hours melt,t0rain,t1rain,hours rain,alb0,alb1,height change 1,height change 2
+CP1,2021-08-10 01:00:00,2021-08-23 23:00:00,288,2021-08-13 20:00:00,2021-08-23 23:00:00,215,0.86,0.83,-0.10,-0.07

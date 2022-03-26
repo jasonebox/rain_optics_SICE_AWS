@@ -1,0 +1,31 @@
+* DONE get plus minus average snowline change quantity, like using a standard d from the multi-image sample OR use the plus minus from the emergent bare ice threshold, see lines 370+ in rain_optics_SICE_AWS/SICE_retrievals/albedo_elevation_profile_082021_cw_nw_ne.py and update the values in the google doc
+  CLOSED: [2021-12-04 Sa 11:24]
+* TODO add revised Sentinelhub code to repo outputs geotiff and has graphic with map rotated so north is up, grid axis off, site labled
+* DONE for e.g. 20 August, overplot a symbol and name using in rain_optics_SICE_AWS/SentinelHub/sentinel_hub_plt.py the position of KAN_U, and may be KAN_M is on there using the lositions from rain_optics_SICE_AWS/AWS_info/PROMICE_GC-Net_info.csv 
+  CLOSED: [2021-12-04 Sa 11:24]
+* PROCESSING examine Sentinel-2 images for blue saturated snow in ~August 2020 and 2019, how different is 2021?
+* DONE obtain surface elevations corresponding with  67.009100, -47.301900
+  output of get_elevation_at_point.py -> Elevation at -47.3019, 67.0091: 1756.0
+  CLOSED: [2021-11-30 Di 21:26]
+* DONE obtain shapefiles for the CW, NO and NE areas from ./rain_optics_SICE_AWS/SICE_retrievals/albedo_elevation_profile_082021_cw_nw_ne.py 
+  CLOSED: [2021-11-27 Sa 10:20]
+* DONE send ~10 spectra of polluted snow to AK
+  CLOSED: [2021-11-27 Sa 09:45]
+* DONE Watson catchment area per 100 m bin to .csv dataframe
+  CLOSED: [2021-11-20 Sa 10:12]
+* DONE Watson catchment area number to study see __km
+  CLOSED: [2021-11-20 Sa 10:02]
+* DONE AW develop tristimulus RGB geotiff code using OLCI TOA .tif files / bands , for 20 Aug, I think
+  CLOSED: [2021-11-20 Sa 11:31]
+* DONE AW map with S2+S3+stations+polygon
+* DONE AW pull full spectra from SICE-3
+* DONE AW extract full spectra at AWS locations for AK
+* DONE AW pull S2 BC 
+* DONE AW bring BBA_combination files to repo
+* DONE AW plot spectrum at AWS sites
+  CLOSED: [2021-11-20 Sa 09:54]
+* DONE AW albedo figure, add std enveloppe
+* DONE produce snowline shapefiles
+  CLOSED: [2021-11-20 Sa 09:38]
+* DONE AW create 2017-2021 BIA figure
+  CLOSED: [2021-11-20 Sa 15:45]

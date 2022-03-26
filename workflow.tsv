@@ -1,0 +1,28 @@
+Table 1
+Figure	Description	Path	Production notes				
+1	Location map	./OLCI_tristimulus/compute_OLCI_tristimulus.py	"Inputs:
+OLCI_tristimulus/tristimulus_202108021.tif
+S2 imagery are from Sentinel open hub
+Snowline data from 
+.Watson_catchment/Watson/catchment_Watson.shp
+Figure is composed using QGIS and Adobe Illustrator"				
+2	NUK_U and South Dome meteorological records	./analyse_GCNv2_PROMICEv4.py	.pngs in ./AWS_info/Figs				
+3	Elevation profiles	./SICE_retrievals/albedo_elevation_profile_082021_cw_nw_ne.py	.pngs in ./SICE_retrievals/figures				
+4	Surface energy budget	./SEMMIS/SEMMIS.py	./SEMMIS/Figs				
+5	Bare ice area	./SICE_bare_ice_area/bia_visualisation.py					
+S1	Synoptic maps	"./ERA5/gather_ERA5_event_2021_Aug_14.py
+./ERA5/map_ERA5_tcwv_z_GRIB.py"	Figure is composed using Adobe Illustrator				
+S2	Photo of AWS at South Dome						
+S3	Photo of AWS at Sumit						
+S4	Photo of AWS at NUK_U						
+S5	Summit and NASA-SE meteorological records	"Summit: ./analyse_GC-Net_Envidat_xmit.py
+NASA-SE: ./analyse_GCNv2_PROMICEv4.py"	.pngs in ./AWS_info/Figs				
+S6	Swiss Camp and CP1 meteorological records	./analyse_GCNv2_PROMICEv4.py	.pngs in ./AWS_info/Figs				
+S7	KAN L,M,U meteorological records	./analyse_rain_impact_PROMICE_daily.py	.pngs in ./AWS_info/Figs				
+S8	Elevation profiles	./SICE_retrievals/albedo_elevation_profile_082021_cw_nw_ne.py	.pngs in ./SICE_retrievals/figures				
+S9	Elevation profiles	./SICE_retrievals/albedo_elevation_profile_082021_cw_nw_ne.py	.pngs in ./SICE_retrievals/figures				
+S10	Surface energy budget	./SEMMIS/SEMMIS.py	./SEMMIS/Figs				
+S11	Albedo anomaly		polarportal.dk				
+S12	Photo of AWS at KAN_M						
+S13	Photo of AWS at KAN_U	./Photos/KAN_U photo D van As 19 August 2021 exp.jpg					
+S14	Watson River discharge	./Watson_catchment/Watson_river_discharge.py	./Watson_catchment/readme Watson River discharge data.txt				

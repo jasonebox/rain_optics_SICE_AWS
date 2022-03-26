@@ -1,0 +1,13 @@
+site	region	latitude,°N	longitude, °W	elevation, m	August 2021 precipitation event amount, mm	albedo difference: pre-rain - post-rain	surface height change: (before - after) rain, m	alb0	alb1
+KAN_L	CW	67.095	49.954	664		-0.09		0.53	0.44
+PET	NO	80.084	58.067	741		-0.16		0.68	0.52
+KPC_U	NE	79.833	25.163	866		-0.12	-0.03	0.75	0.63
+UPE_U	NW	72.887	53.585	929		-0.10		0.59	0.48
+NUK_U	CW	64.510	49.279	1119	97	-0.41	-0.40	0.77	0.35
+SWC	CW	69.332	49.222	1122	9		-0.20		
+KAN_M	CW	67.067	48.838	1269		-0.54	-0.46	0.80	0.26
+KAN_U	CW	67.000	47.027	1843		-0.10	-0.30	0.85	0.75
+CP1	CW	69.523	47.022	1941	15	-0.05	-0.06	0.69	0.64
+DY2	CW	66.481	46.280	2100		-0.12	-0.11	0.83	0.71
+NSE	SE	66.287	42.296	2386	4	-0.07	-0.11	0.85	0.78
+SDM	SO	63.089	44.490	2895	5	-0.13	-0.20	0.85	0.72
