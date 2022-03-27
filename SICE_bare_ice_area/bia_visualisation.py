@@ -19,7 +19,11 @@ if os.getlogin() == 'jason':
     
 os.chdir(base_path)
 
+<<<<<<< HEAD
+# %% graphics parameters
+=======
 ## %% graphics parameters
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
 
 font_size=24
 
@@ -43,6 +47,8 @@ colors = ['purple','k', 'r', 'darkorange', 'b']
 
  # %% two variables are plotted and each has its own parameters
 
+<<<<<<< HEAD
+=======
 watson_2021=pd.read_csv('/Users/jason/Dropbox/rain_optics_SICE_AWS/Watson_catchment/Watson_river_discharge_2021.csv')
 watson_2021['date']=pd.to_datetime(watson_2021['doy'], format='%j').dt.strftime('%Y-%m-%d %H')
 watson_2021['date'] = pd.to_datetime(watson_2021.date) + pd.offsets.DateOffset(years=121)
@@ -56,6 +62,7 @@ watson_2021['date'] = pd.to_datetime(watson_2021.date) + pd.offsets.DateOffset(y
 watson_2021.index = pd.to_datetime(watson_2021.date)
 watson_2021=watson_2021.rename(columns={"date": "time"})
 
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
 # varnams=['albedo','bare_ice_area']
 varnams=['albedo','bare_ice_area_gris']
 ytits=['albedo, unitless','bare ice area, km$^{2}$']
@@ -82,7 +89,10 @@ for j,varnam in enumerate(varnams):
             dt = pd.to_datetime(annual_results.time)
             
             dummy_datetime = pd.to_datetime(['2001' + d[4:] for d in annual_results.time])
+<<<<<<< HEAD
+=======
 
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
         
             datex = pd.to_datetime(['2021' + d[4:] for d in annual_results.time])
             
@@ -108,6 +118,8 @@ for j,varnam in enumerate(varnams):
         mult=0.9
         xx0=0.99 ; yy0=0.98 ; dy=-0.08 ; cc=0
         
+<<<<<<< HEAD
+=======
         if year=='2021':
             # coordinate dummy_datetime.values
             # watson_2021["time"] = pd.to_datetime(watson_2021["time"])
@@ -118,6 +130,7 @@ for j,varnam in enumerate(varnams):
             ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
             ax2.plot(dummy_datetime,annual_results.discharge,'k',zorder=20)
             
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
 # vt0x,vt1x,m0=return_rate(ALB,'2021-08-7','2021-08-13-11','b',15,axnum,'')
 # vt0x,vt1x,m1=return_rate(ALB,'2021-08-13-11','2021-08-14-19','r',55,axnum,'heatwave\nwith rain')
 # vt0x,vt1x,m1=return_rate(ALB,'2021-08-14-19','2021-08-20-00','g',95,axnum,'warm, cloudy\nno rain')
@@ -136,8 +149,14 @@ for j,varnam in enumerate(varnams):
         # plt.axvspan(pd.to_datetime('2001-08-07)', pd.to_datetime('2001-08-13-11'),
         #                            color='b', alpha=0.5)
 
+<<<<<<< HEAD
+        plt.axvspan(pd.to_datetime('2001-08-07'), pd.to_datetime('2001-08-13-11'),
+                    color='b', alpha=0.5)
+
+=======
         plt.axvspan(pd.to_datetime('2001-08-09'), pd.to_datetime('2001-08-13-11'),
                     color='b', alpha=0.5,label='cool period\nafter snow')
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
         
         plt.axvspan(pd.to_datetime('2001-08-13-11'), pd.to_datetime('2001-08-14-19'),
                     color='r', alpha=0.5,label='heatwave')
@@ -148,13 +167,22 @@ for j,varnam in enumerate(varnams):
         plt.axvspan(pd.to_datetime('2001-08-20-00'), pd.to_datetime('2001-08-27-00'), 
                     color='m', alpha=0.5,label='albedo and latent\nfeedbacks')
 
+<<<<<<< HEAD
+        plt.axvspan(pd.to_datetime('2001-08-27'), pd.to_datetime('2001-08-31'), 
+                    color='gray', alpha=0.5,label='ablation end')
+=======
         plt.axvspan(pd.to_datetime('2001-08-27'), pd.to_datetime('2001-09-01'), 
                     color='gray', alpha=0.5,label='ablation\nseason end')
 
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
 
         mult=0.8
         ax.legend(prop={'size': font_size*mult})#,loc=2)
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
         # ax.legend(loc=legend_locs[j])
         ax.set_ylabel(ytits[j], fontsize=font_size)
         # ax.set_xlabel('Time, day-month', fontsize=font_size)
@@ -164,7 +192,11 @@ for j,varnam in enumerate(varnams):
         
         ax.set_xlim(pd.to_datetime('2001-06-01'), pd.to_datetime(end_date[j]))
         
+<<<<<<< HEAD
+        
+=======
 
+>>>>>>> a65829b90bfd04fa4c5d92746f5f7bc38615524e
         if j==0:
             lastval='{:.3f}'.format(annual_results[varnam][-1:].values[0])
         else:
