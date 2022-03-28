@@ -10,10 +10,10 @@
 sites=['SWC','CP1','SDM','NSE','NUK_U']
 
 site='CP1'
-site='SDM'
+# site='SDM'
 # site='NSE'
-# site='SWC'
-site='NUK_U'
+site='SWC'
+# site='NUK_U'
 
 import math
 import matplotlib.pyplot as plt
@@ -483,8 +483,6 @@ if do_SEB:
     m2mm=1000
     cp_water=4186
 
-#%%
-
     L_fusion=3.34e5
     cp_ice=2093
     water_tempearture=5 #deg. C
@@ -496,14 +494,9 @@ if do_SEB:
     mm_snow_melted_by_rain = cp_water * mm_of_rain_at_xC * rain_temperature / L_fusion
  
     print('mm_snow_melted_by_rain',mm_snow_melted_by_rain)
-    
-
-#%%    
     print('L_fusion/cp_ice',L_fusion/cp_ice)
-   #%%
     n_hours=4
     print(1.5e6/(3600*n_hours))
-#%%
     z2=2.7
     z1=1.5
     dz=z2-z1
@@ -710,10 +703,9 @@ for sensor_level in sensor_levels:
 x = df.time
 
 plt.close()
-n_rows=6
+n_rows=5
 plt_wind=0
 plot_RH=1
-if plot_RH:n_rows=6
 fig, ax = plt.subplots(n_rows,1,figsize=(10,18))
 colors=['b','r','b','r']
 
@@ -724,7 +716,7 @@ mult=1.4
 ax[cc].text(-0.13,1.13,a_or_b,transform=ax[0].transAxes, fontsize=font_size*mult,
     verticalalignment='top',rotation=0,color='k', rotation_mode="anchor")  
 
-ax[0].set_title(site2+", "+"{:.0f}".format(elev)+' m, '+"{:.3f}".format(lat)+' °N, '+"{:.3f}".format(abs(lon))+' °W')
+ax[0].set_title(site2+", "+"{:.0f}".format(elev)+' m, '+"{:.3f}".format(lat)+'°N, '+"{:.3f}".format(abs(lon))+'°W')
 
 maxes=[]
 nams=['Rain_amount_L','Rain_amount_U','Rain_amount_L_uncorrected','Rain_amount_U_uncorrected']
@@ -843,7 +835,7 @@ if plot_RH:
         xt=df.time[t0:t1]
         ax[cc].plot(xt,y,
                 # drawstyle='steps',
-                '-o',color=colors[i],
+                '-',color=colors[i],
                 label='Humidity '+str(i+1),
                 linewidth=th*2)#,label='air T, '+sensor_level)   
         ax[cc].fill_between(xt, y, where=(y > 98), color='b', alpha=.1)#,label='RH'+str(i+1)+'>=98%')
@@ -851,7 +843,8 @@ if plot_RH:
     ax[cc].axhline(y=0,linestyle='--',linewidth=th*1.5, color='grey')
     
     ax[cc].set_ylabel('Relative Humidity, %', color='k')
-    ax[cc].set_ylim(np.nanmin(y),np.nanmax(y))     
+    # ax[cc].set_ylim(np.nanmin(y),np.nanmax(y))     
+    ax[cc].set_ylim(np.nanmin(y),101)     
     ax[cc].get_xaxis().set_visible(True)
     # ax[cc].legend(prop={'size': font_size})
     ax[cc].legend(prop={'size': font_size*mult}, facecolor=(1, 1, 1, 1))
@@ -890,7 +883,7 @@ ax[cc].set_xlim(t0,t1)
 ax[cc].set_xticklabels([])
 
 # # ---------------------------------------------------------------------------- Rad
-plt_rad=1
+plt_rad=0
 if plt_rad:
     cc+=1
 
@@ -1031,6 +1024,7 @@ height_end=np.nan
 
 # df.columns
 x1=df["SR_L"][t0]-df["SR_L"]
+SR50=x1
 if site=='NUK_U':
     x1[((df.time<datetime(2021,8,9))&(x1<-0.04))]=np.nan
     SR50=x1
@@ -1089,7 +1083,7 @@ xcolor='darkblue'
 ax[cc].xaxis.label.set_color(xcolor)
 ax[cc].tick_params(axis='x', colors=xcolor)
 mult=0.8
-ax[cc].text(-0.15,0.0, "day of\nAug.'21",transform=ax[cc].transAxes, fontsize=font_size*mult,
+ax[cc].text(-0.15,-0.02, "day of\nAug.'21",transform=ax[cc].transAxes, fontsize=font_size*mult,
     verticalalignment='top',rotation=0,color=xcolor, rotation_mode="anchor")  
 plt.setp(ax[cc].xaxis.get_majorticklabels(), rotation=90,ha='center' )
 
@@ -1105,7 +1099,7 @@ if site=='NUK_U':
 
 ##%% end stuff
 
-ly='x'
+ly='p'
 if ly == 'x':plt.show()
 
 plt_logos=0

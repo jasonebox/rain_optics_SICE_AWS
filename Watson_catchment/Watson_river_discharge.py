@@ -38,7 +38,7 @@ for i in range(len(data)):
 
 #data to plot
 df=pd.DataFrame(data['WaterFluxDiversOnly(m3/s)'])
-#%%
+# #%%
 # conv=24*3600/10e9 #convert from m3/s into km3 if daily data
 # df*=conv
 df['Year']=data.Year
@@ -60,7 +60,7 @@ df_2021.index = pd.to_datetime(df_2021.time)
 print(df_2021)
 
 
-#%%
+##%%
 #make pivot table -> easy to plot
 piv_all = pd.pivot_table(df, index=['DOY'],columns=['Year'], values=['WaterFluxDiversOnly(m3/s)'])
 piv_2 = pd.pivot_table(df2, index=['DOY'],columns=['Year'], values=['WaterFluxDiversOnly(m3/s)'])
@@ -69,7 +69,7 @@ piv_4 = pd.pivot_table(df_2021, index=['DOY'],columns=['Year'], values=['WaterFl
 piv_mean = piv_all['mean']=piv_all.mean(axis=1)
 
 
-#%% read NAO
+#%% NAO plot
 
 
 fn='/Users/jason/Dropbox/NAO/daily/nao.reanalysis.t10trunc.1948-present.txt'
@@ -80,7 +80,6 @@ dfNAO.index = pd.to_datetime(dfNAO.time)
 
 dfNAO = dfNAO.loc[dfNAO['time']>='2021-01-01',:] 
 
-#%%
 
 th=1 
 font_size=26
@@ -99,7 +98,7 @@ plt.rcParams['figure.figsize'] = 17, 10
 plt.rcParams["legend.framealpha"] = 0.8
 plt.rcParams['figure.figsize'] = 5, 4
 
-#%% plot NAO and discharge
+##%% plot NAO and discharge
 
 t0=datetime(2021, 6, 1) ; t1=datetime(2021, 9, 15)
 
@@ -171,37 +170,39 @@ if ly == 'p':
     plt.savefig(fig_path+'NAO_vs_discharge_2021.png', bbox_inches='tight', dpi=250)
     # if plt_eps:
     #     plt.savefig(fig_path+site+'_'+str(i).zfill(2)+nam+'.eps', bbox_inches='tight')
-#%% plot data
+#%% plot discharge
 
 import datetime
 
-th=1 
-font_size=18
-# plt.rcParams['font.sans-serif'] = ['Georgia']
-plt.rcParams["font.size"] = font_size
-plt.rcParams['axes.facecolor'] = 'w'
-plt.rcParams['axes.edgecolor'] = 'k'
-plt.rcParams['axes.grid'] = True
-plt.rcParams['grid.alpha'] = 1
-plt.rcParams['grid.color'] = "#cccccc"
-plt.rcParams["legend.facecolor"] ='w'
-plt.rcParams["mathtext.default"]='regular'
-plt.rcParams['grid.linewidth'] = th
-plt.rcParams['axes.linewidth'] = th #set the value globally
-plt.rcParams['figure.figsize'] = 17, 10
-plt.rcParams["legend.framealpha"] = 0.8
-plt.rcParams['figure.figsize'] = 5, 4
+font_size = 18
+
+params = {
+    "legend.fontsize": font_size * 0.8,
+    # 'figure.figsize': (15, 5),
+    "axes.labelsize": font_size,
+    "axes.titlesize": font_size,
+    "xtick.labelsize": font_size,
+    "ytick.labelsize": font_size,
+    "ytick.color": "k",
+    "xtick.color": "k",
+    "axes.labelcolor": "k",
+    "axes.edgecolor": "k",
+    "figure.facecolor": "w",
+    "axes.grid": False,
+    "legend.framealpha": 1,
+}
+plt.rcParams.update(params)
 
 
 fig, ax = plt.subplots(figsize=(9,5))
-plt.plot(piv_all, color='lightgrey') #2006-2021 , label='2006-2021'
+plt.plot(piv_all, color='lightgrey',linewidth=2) #2006-2021 , label='2006-2021'
 plt.plot(piv_2, color='darkorange') #2010 ,label='2010'
 plt.plot(piv_3, color='r') #2012 ,label='2012'
 plt.plot(piv_4, color='b') #2021  ,label='2021'
 
 watson_2021=pd.DataFrame(columns=['doy','discharge'])
-watson_2021.doy=piv_3.index.values
-watson_2021.discharge=piv_3.values
+watson_2021.doy=piv_4.index.values
+watson_2021.discharge=piv_4.values
 watson_2021.to_csv('/Users/jason/Dropbox/rain_optics_SICE_AWS/Watson_catchment/Watson_river_discharge_2021.csv',index=None)
 
 plt.plot(piv_mean, color='k')  #,label='average'
@@ -239,7 +240,7 @@ line5 = Line2D([0], [0], label=years[4], color=colors[4])
 # rect = mpatches.Patch(label=years[5], color=colors[5], alpha=0.3)
 # handles.extend([line1, line2, line3, line4, line5, rect])
 handles.extend([line1, line2, line3, line4, line5])
-plt.legend(handles=handles, frameon=True, fontsize=fs)
+plt.legend(handles=handles, frameon=True)
 # plt.legend()
 #x-axis
 start_date=datetime.datetime(2021, 5, 5)
@@ -249,7 +250,6 @@ ticks=[ 134, 151, 165, 181, 195, 212, 226, 243, 257, 273]
 ax.set_xticks(ticks)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=90,ha='center')
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
-plt.grid(linewidth = 0.3)
 
 ly='x'
 fig_path='./Figs/'

@@ -17,6 +17,7 @@ if os.getlogin() == "adrien":
 if os.getlogin() == "jason":
     base_path = "/Users/jason/Dropbox/rain_optics_SICE_AWS"
 
+os.chdir(base_path)
 
 def date_to_int(d: pd._libs.tslibs.timestamps.Timestamp) -> int:
     """Convert datetime to day of year integer"""
@@ -40,14 +41,15 @@ params = {
     "axes.labelcolor": "k",
     "axes.edgecolor": "k",
     "figure.facecolor": "w",
-    "axes.grid": True,
+    "axes.grid": False,
+    "legend.framealpha": 1,
 }
 plt.rcParams.update(params)
 
 years = ["2017", "2018", "2019", "2020", "2021"]
-colors = ["purple", "k", "r", "darkorange", "b"]
+colors = ["purple", "k", "m", "darkorange", "b"]
 
-# %% two variables are plotted and each has its own parameters
+## %% two variables are plotted and each has its own parameters
 
 watson_2021 = pd.read_csv(
     f"{base_path}/Watson_catchment/Watson_river_discharge_2021.csv"
@@ -62,7 +64,6 @@ watson_2021["date"] = pd.to_datetime(watson_2021.date) + pd.offsets.DateOffset(
 # watson_2021['year']=pd.to_datetime(watson_2021.date).dt.year
 # watson_2021['month']=pd.to_datetime(watson_2021.date).dt.month
 # watson_2021['day']=pd.to_datetime(watson_2021.date).dt.day
-
 # watson_2021["date"]=pd.to_datetime(watson_2021[['year', 'month', 'day']])
 
 watson_2021 = watson_2021.rename(columns={"date": "time"})
@@ -86,30 +87,35 @@ for j, varnam in enumerate(varnams):
 
         for i, year in enumerate(years):
 
-            annual_results = pd.read_csv(
-                f"{base_path}/SICE_bare_ice_area/bia_csv/SICE_BIA_Greenland_{year}.csv"
-            )
+            fn=f"{base_path}/SICE_bare_ice_area/bia_csv/SICE_BIA_Greenland_{year}.csv"
+            fn=f"{base_path}/SICE_bare_ice_area/bia_csv/SICE_BIA_Greenland_{year}_rawcumul.csv"
+            annual_results = pd.read_csv(fn)
 
             datex = pd.to_datetime(list(annual_results.time))
+
+            th=3
+            if year=="2021":
+                th=4
+                doy_2021=datex.strftime("%j").astype(int)
+                bia_2021=annual_results[varnam]
 
             ax.plot(
                 datex.strftime("%j").astype(int),
                 annual_results[varnam],
-                "-o",
-                linewidth=3,
+                "-",
+                linewidth=th,
                 color=colors[i],
-                label=year,
-            )
+                label=year)
 
-            if year == "2021":
-                ax.scatter(
-                    datex.strftime("%j").astype(int),
-                    annual_results[varnam],
-                    s=200,
-                    facecolors="none",
-                    zorder=20,
-                    edgecolors="b",
-                )
+            # if year == "2021":
+            #     ax.scatter(
+            #         datex.strftime("%j").astype(int),
+            #         annual_results[varnam],
+            #         s=200,
+            #         facecolors="none",
+            #         zorder=20,
+            #         edgecolors="b",
+            #     )
 
         # ax.set_title(tit0[j]+tit1[j]+' from Sentinel-3',fontsize=font_size*1.2)
         if j == 1:
@@ -125,12 +131,37 @@ for j, varnam in enumerate(varnams):
         cc = 0
 
         if year == "2021":
-
+            c0=0.6 ; color=[0,c0,c0]
+            # c0=0.35 ; color=[c0,c0,c0]
+            # color='c'
             ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
             doy_watson = (
                 pd.to_datetime(list(watson_2021.time)).strftime("%j").astype(int)
             )
-            ax2.plot(doy_watson, watson_2021.discharge, "k", zorder=20)
+            ax2.plot(doy_watson, watson_2021.discharge,'-',color=color,linewidth=th,drawstyle='steps',zorder=1)#,label='Watson river discharge 2021')
+            # ax2.set_ylim(0,35)
+            ax2.spines['right'].set_color(color)
+            ax2.yaxis.label.set_color(color)
+            ax2.tick_params(axis='y', colors=color)
+            ax2.set_ylabel('Watson river discharge 2021, m$^{3}$ s$^{-1}$')
+
+            ax2.grid(False)
+            print(doy_2021,doy_watson)
+            y=watson_2021.discharge
+            x=np.zeros(len(y))*np.nan
+            for daysx in doy_watson:
+                v=np.where(daysx==doy_2021)
+                x[v[0][0]-57]=bia_2021[v[0][0]]
+                print(daysx,v[0][0])
+                # plt.plot(x)
+                plt.plot(y)
+            statsx=stats.pearsonr(x,y)
+            R=statsx[0]
+            oneminusp=1-statsx[1]
+            print("dischargge vs BIA = {:.3f}".format(R)+' ')
+            print("confidence = {:.3f}".format(oneminusp)+' ')
+            # ax2.legend(loc='best')
+
 
         tcks = pd.date_range("2021-06-01", "2021-09-15", freq="SMS")
         tcks_doy = tcks.strftime("%j").astype(int)
@@ -156,7 +187,7 @@ for j, varnam in enumerate(varnams):
         # plt.axvspan(pd.to_datetime('2001-08-07)', pd.to_datetime('2001-08-13-11'),
         #                            color='b', alpha=0.5)
 
-        plt.axvspan(
+        ax.axvspan(
             date_to_int(pd.to_datetime("2001-08-09")),
             date_to_int(pd.to_datetime("2001-08-13-11", format="%Y-%m-%d-%H")),
             color="b",
@@ -164,15 +195,15 @@ for j, varnam in enumerate(varnams):
             label="cool period\nafter snow",
         )
 
-        plt.axvspan(
+        ax.axvspan(
             date_to_int(pd.to_datetime("2001-08-13-11", format="%Y-%m-%d-%H")),
             date_to_int(pd.to_datetime("2001-08-14-19", format="%Y-%m-%d-%H")),
             color="r",
             alpha=0.5,
-            label="heatwave",
+            label="AR heatwave",
         )
 
-        plt.axvspan(
+        ax.axvspan(
             date_to_int(pd.to_datetime("2001-08-14-19", format="%Y-%m-%d-%H")),
             date_to_int(pd.to_datetime("2001-08-20-00", format="%Y-%m-%d-%H")),
             color="g",
@@ -180,7 +211,7 @@ for j, varnam in enumerate(varnams):
             label="heat and clouds\ndissipating",
         )
 
-        plt.axvspan(
+        ax.axvspan(
             date_to_int(pd.to_datetime("2001-08-20-00", format="%Y-%m-%d-%H")),
             date_to_int(pd.to_datetime("2001-08-27-00", format="%Y-%m-%d-%H")),
             color="m",
@@ -188,16 +219,16 @@ for j, varnam in enumerate(varnams):
             label="albedo and latent\nfeedbacks",
         )
 
-        plt.axvspan(
+        ax.axvspan(
             date_to_int(pd.to_datetime("2001-08-27")),
             date_to_int(pd.to_datetime("2001-09-01")),
             color="gray",
             alpha=0.5,
-            label="ablation\nseason end",
+            label="ablation season end",
         )
 
-        mult = 0.8
-        ax.legend(prop={"size": font_size * mult})  # ,loc=2)
+        mult = 0.75
+        ax.legend(prop={"size": font_size * mult},title='bare ice area')  # ,loc=2)
 
         # ax.legend(loc=legend_locs[j])
         ax.set_ylabel(ytits[j], fontsize=font_size)
@@ -218,9 +249,13 @@ for j, varnam in enumerate(varnams):
         #          fontsize=font_size*mult,transform=ax.transAxes,
         #          color='b',va='top',ha='right') ; cc+=1.
 
-        ly = "x"
+        # mult=1
+        # props = dict(boxstyle='round', facecolor='w',edgecolor='w',linewidth=th,alpha=0.8)
+        # plt.text(0.2, 0.9,txt, fontsize=font_size*mult,transform=ax.transAxes,color=color,verticalalignment='center', bbox=props,linespacing=1)
 
-        figpath = "./figures/"
+        ly = "p"
+
+        figpath = "./Figs_GRL/"
 
         if ly == "p":
             os.system("mkdir -p " + figpath)
@@ -228,11 +263,11 @@ for j, varnam in enumerate(varnams):
             figx, figy = 16, 12
             # figx,figy=16*2,12*2
             plt.savefig(
-                figpath + "bare_ice_area.png",
+                figpath + "Fig_5_bare_ice_area.pdf",
                 bbox_inches="tight",
                 figsize=(figx, figy),
-                type="png",
-                dpi=250,
+                # type="png",
+                # dpi=300,
                 facecolor="w",
             )
 
