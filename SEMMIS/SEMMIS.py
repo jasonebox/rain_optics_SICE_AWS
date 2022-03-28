@@ -312,12 +312,12 @@ for i,file in enumerate(files):
 #%%
 t0=datetime(2021, 8, 10) ; t1=datetime(2021, 8, 31)
 t0=datetime(2021, 8, 7) ; t1=datetime(2021, 8, 31,12)
-t0=datetime(2021, 8, 13) ; t1=datetime(2021, 8, 15)
+# t0=datetime(2021, 8, 13) ; t1=datetime(2021, 8, 15)
 
 levs=np.arange(100,2100,100)
 
 levs=[1300] # KAN_M
-levs=[1800] # KAN_U
+# levs=[1800] # KAN_U
 
 ALB['time']=pd.to_datetime(ALB['time'])
 ALB['doy']=ALB['time'].dt.dayofyear
@@ -629,7 +629,7 @@ for lev in levs:
 
             # note y0 was df['meltwater_cum'][-1]+2 and before that was y0=(y_min+y_max)/2
             ax[axnum].text(middle_time,y0,msg,color='k',fontsize=19,alpha=1,ha='center')
-            ax[axnum].text(middle_time,y0+46,titlex,color=colorx,fontsize=20,alpha=1,ha='center')
+            ax[axnum].text(middle_time,y0+76,titlex,color=colorx,fontsize=20,alpha=1,ha='center')
 
             return(vt0x,vt1x,m)
         #________________________________________________________________________________
@@ -638,7 +638,7 @@ for lev in levs:
         if annotate_plot:
             axnum=2
             vt0x,vt1x,m0=return_rate(ALB,'2021-08-7','2021-08-13-11','b',15,axnum,'')
-            vt0x,vt1x,m1=return_rate(ALB,'2021-08-13-11','2021-08-14-19','r',45,axnum,'heatwave\nwith rain')
+            vt0x,vt1x,m1=return_rate(ALB,'2021-08-13-11','2021-08-14-19','r',45,axnum,'AR heatwave\nwith rain')
             vt0x,vt1x,m1=return_rate(ALB,'2021-08-14-19','2021-08-20-00','g',92,axnum,'warm, cloudy,\nno rain')
             vt0x,vt1x,m2=return_rate(ALB,'2021-08-20-00','2021-08-27-00','m',19,axnum,'albedo feedback\ndominated melt')
             # vt0x,vt1x,m2=return_rate(ALB,'2021-08-27-00','2021-08-31-12','k',25,axnum,'ablation end')
@@ -672,11 +672,16 @@ for lev in levs:
     ax[cc].text(-0.096,0.03, "day of\nAug.'21",transform=ax[cc].transAxes, fontsize=font_size*mult,
         verticalalignment='top',rotation=0,color=xcolor, rotation_mode="anchor")  
 
-    ly='x'
+    ly='p'
     
     if ly=='p':
-        plt.savefig('.//SEMMIS/Figs/'+str(lev)+'m '+source_name+'.png', DPI=72,
+        plt.savefig('./SEMMIS/Figs/'+str(lev)+'m '+source_name+'.png', DPI=72,
                 bbox_inches='tight')
+        if levs[0]==1300:
+            fignam='Fig S10 SEMMIS.pdf'
+        if levs[0]==1800:
+            fignam='Fig 4 SEMMIS.pdf'
+        plt.savefig('./Figs_GRL/'+fignam,bbox_inches='tight')    
 #%%
 do_gif=0
 if do_gif == 1:

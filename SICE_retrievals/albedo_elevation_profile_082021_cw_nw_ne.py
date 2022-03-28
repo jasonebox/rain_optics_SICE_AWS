@@ -17,7 +17,7 @@ import matplotlib as mpl
 from shapely import geometry
 import geopandas as gpd
 
-#%% graphics settings
+##%% graphics settings
 
 font_size=20
 plt.rcParams["font.size"] = font_size
@@ -28,7 +28,7 @@ params = {"ytick.color" : "k",
 plt.rcParams.update(params)
 plt.gcf().set_facecolor("w")
 
-# %% prepare paths
+## %% prepare paths
 
 if os.getlogin() == 'adrien':
     base_path = '/home/adrien/EO-IO/rain_optics_SICE_AWS/SICE_retrievals'
@@ -69,7 +69,7 @@ profile=rasterio.open('./metatiffs/mask_1km_1487x2687.tif').profile
 
 region='CW'
 # region='NO'
-# region='NE'
+region='NE'
 
 if region=='NE':
     row_min = 320
@@ -165,9 +165,8 @@ def write_region_polygon(region):
 
     gdr = gpd.GeoDataFrame({'geometry': [region_poly]}, crs='EPSG:3413')
 
-    gdr.to_file(f'./{region}_polygon.shp')
-    
-    print(f'wrote ./{region}_polygon.shp')
+    # gdr.to_file(f'./{region}_polygon.shp')
+    # print(f'wrote ./{region}_polygon.shp')
     
     return None
 
@@ -393,41 +392,41 @@ if do_rest:
         
     # xos=25
     # x0=elev_bins[:-1][np.array(albedo_prof_prevent) >= 0.565][0]
-    # plt.axvspan(x0-xos, x0+xos,  color=color0, alpha=0.3,label='pre-heatwave snowline')
+    # plt.axvspan(x0-xos, x0+xos,  color=color0, alpha=0.3,label='pre-AR snowline')
     
     # plt.axvspan(snowline_before_m1std, snowline_before_p1std,  
-    #             color=color0, alpha=0.3,label='pre-heatwave snowline')
+    #             color=color0, alpha=0.3,label='pre-AR snowline')
     
     if region == 'CW':
         plt.axvspan(582.0, 778.7,  
-                    color=color0, alpha=0.3,label='pre-heatwave snowline')
+                    color=color0, alpha=0.3,label='pre-AR snowline')
         snowline_before=(582.0+778.7)/2
         plt.axvspan(1426.2, 1585.1,  
-                color=color1, alpha=0.3,label='post-heatwave snowline')
+                color=color1, alpha=0.3,label='post-AR snowline')
         
     if region == 'NE':
-        plt.axvspan(582.0, 778.7,  
-                    color=color0, alpha=0.3,label='pre-heatwave snowline')
+        plt.axvspan(582.0+78/2, 778.7-78/2,  
+                    color=color0, alpha=0.3,label='pre-AR snowline')
         snowline_before=(582.0+778.7)/2
         
-        plt.axvspan(727-78,727+78,  
-                color=color1, alpha=0.3,label='post-heatwave snowline')
+        plt.axvspan(727-78/2,727+78/2,  
+                color=color1, alpha=0.3,label='post-AR snowline')
         
     if region == 'NO':
         plt.axvspan(582.0, 778.7,  
-                    color=color0, alpha=0.3,label='pre-heatwave snowline')
+                    color=color0, alpha=0.3,label='pre-AR snowline')
         plt.axvspan(879-60, 879+60,  
-                color=color1, alpha=0.3,label='post-heatwave snowline')
+                color=color1, alpha=0.3,label='post-AR snowline')
         snowline_before=(582.0+778.7)/2
         
         
     plt.axvline(snowline_before, linestyle='--', color='gray',zorder=20)
     
     # x0=snowline_after
-    # plt.axvspan(x0-xos, x0+xos,  color=color1, alpha=0.3,label='post-heatwave snowline')
+    # plt.axvspan(x0-xos, x0+xos,  color=color1, alpha=0.3,label='post-AR snowline')
     
     # plt.axvspan(snowline_after_m1std, snowline_after_p1std,  
-    #             color=color1, alpha=0.3,label='post-heatwave snowline')
+    #             color=color1, alpha=0.3,label='post-AR snowline')
     
     plt.axvline(snowline_after, linestyle='--', color='gray')
     
@@ -455,7 +454,14 @@ if do_rest:
     if ly=='p':
         plt.savefig('./figures/082021_albedo_elev_profile_'+region+'.png', 
                 bbox_inches='tight')
-    
+        if region=='NO':
+            fignam='Fig S7 082021_albedo_elev_profile_'+region+'.pdf'
+        if region=='CW':
+            fignam='Fig 3 082021_albedo_elev_profile_'+region+'.pdf'
+        if region=='NE':
+            fignam='Fig S8 082021_albedo_elev_profile_'+region+'.pdf'
+        plt.savefig('../Figs_GRL/'+fignam, 
+                bbox_inches='tight')    
     #%%
     
     # print(df)
