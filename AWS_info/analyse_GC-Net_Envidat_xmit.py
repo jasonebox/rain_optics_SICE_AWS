@@ -12,6 +12,7 @@ https://www.envidat.ch/data-api/gcnet/csv/humboldt/airtemp1,airtemp2,airtemp_cs5
 https://www.envidat.ch/data-api/gcnet/csv/petermann/airtemp1,airtemp2,airtemp_cs500air1, airtemp_cs500air2,swin,swout,sh1,sh2/end/-999/2020-01-01/2021-08-20/
 
 https://www.envidat.ch/data-api/gcnet/csv/summit/airtemp1,airtemp2,airtemp_cs500air1, airtemp_cs500air2,swin,swout,sh1,sh2, windspeed1,windspeed2/end/-999/2020-01-01/2021-08-20/
+https://www.envidat.ch/data-api/gcnet/csv/summit/airtemp1,airtemp2,airtemp_cs500air1, airtemp_cs500air2,rh1,rh2,swin,swout,sh1,sh2, windspeed1,windspeed2/end/-999/2020-01-01/2021-08-20/
 
 """
 
@@ -43,15 +44,15 @@ plt.rcParams["font.size"] = font_size
 sites=["gits","humboldt","petermann","tunu_n","swisscamp_10m_tower","swisscamp","crawfordpoint","nasa_u","summit","dye2","jar1","saddle","southdome","nasa_east","nasa_southeast","neem","east_grip"]
 
 os.system('')
-fn='/Users/jason/Dropbox/AWS/GCNet_Envidat/raw/summit_2021-06-01_2021-08-30.csv'; site='summit' ; site2='Summit'
+fn='/Users/jason/Dropbox/AWS/GCNET/GCNet_Envidat/raw/summit_2020-01-01_2021-08-30.csv'; site='summit' ; site2='Summit'
 a_or_b='(a)'
 # fn='/Users/jason/Dropbox/AWS/GCNet_Envidat/raw/humboldt_2020-01-01_2021-10-20.csv' ; site='humboldt'
 # fn='/Users/jason/Dropbox/AWS/GCNet_Envidat/raw/petermann_2020-01-01_2021-10-20.csv' ; site='petermann'
-fn='/Users/jason/Dropbox/AWS/GCNet_Envidat/raw/dye2_2020-01-01_2021-10-20.csv' ; site='dye2' ; site2='DYE-2'
+# fn='/Users/jason/Dropbox/AWS/GCNet_Envidat/raw/dye2_2020-01-01_2021-10-20.csv' ; site='dye2' ; site2='DYE-2'
 
 os.system('/bin/cp '+fn+' ./AWS_info/AWS_data/'+site+'.txt')
 
-names=['timestamp_iso','TA1','TA2','TA1cs','TA2cs','SWD','SWU','SH1','SH2','U1','U2']
+names=['timestamp_iso','TA1','TA2','TA1cs','TA2cs','RH1','RH2','SWD','SWU','SH1','SH2','U1','U2']
 df=pd.read_csv(fn,skiprows=1,names=names)
 # print(df.columns)
 # df[df<-998]=np.nan
@@ -61,18 +62,40 @@ meta=pd.read_csv(fn)
 print(meta.columns)
 for col in meta.columns[2:5]:
     meta[col] = pd.to_numeric(meta[col])
-print(meta)
+# print(meta)
 v=np.where(meta.name==site2) ; v=v[0][0]
+
+##%% Relative humidity tools
+def RH_water2ice(RH, T):
+    # switch ONLY SUBFREEZING timesteps to with-regards-to-ice
+
+    Lv = 2.5001e6  # H2O Vaporization Latent Heat (J/kg)
+    Ls = 2.8337e6  # H2O Sublimation Latent Heat (J/kg)
+    Rv = 461.5     # H2O Vapor Gaz constant (J/kg/K)
+    ind = T < 0
+    TCoeff = 1/273.15 - 1/(T+273.15)
+    Es_Water = 6.112*np.exp(Lv/Rv*TCoeff)
+    Es_Ice = 6.112*np.exp(Ls/Rv*TCoeff)
+    RH_out = RH.copy()
+    RH_out[ind] = RH[ind] * Es_Water[ind]/Es_Ice[ind] 
+    return RH_out
+
 
 for nam in names[1:5]:
     df[nam][df[nam]<-998]=np.nan
     df[nam][df[nam]>10]=np.nan
     df[nam][df[nam]<-60]=np.nan
-    
-for nam in names[7:9]:
-    df[nam][df[nam]<-998]=np.nan
-    df[nam][df[nam]>10]=np.nan
-    df[nam][df[nam]<-60]=np.nan
+
+df['RH1_w'] = RH_water2ice(df['RH1'] ,df['TA1cs'])
+df['RH2_w'] = RH_water2ice(df['RH2'] ,df['TA2cs'])
+
+df['RH1_w'][~np.isfinite(df['TA1cs'])]=np.nan
+df['RH2_w'][~np.isfinite(df['TA2cs'])]=np.nan
+
+# for nam in names[7:9]:
+#     df[nam][df[nam]<-998]=np.nan
+#     df[nam][df[nam]>10]=np.nan
+#     df[nam][df[nam]<-60]=np.nan
 
 for i,nam in enumerate(names[7:9]):
     df[nam][df[nam]<-998]=np.nan
@@ -93,6 +116,9 @@ df['ALB']=np.nan
 plusminus=13
 for i in range(0+plusminus,N-plusminus):
     df['ALB'][i]=np.nansum(df['SWU'][i-plusminus:i+plusminus])/np.nansum(df['SWD'][i-plusminus:i+plusminus])
+
+# plt.plot(df['SWU'])
+# plt.plot(df['SWD'])
 
 df['ALB'][df['ALB']>0.99]=np.nan
 df['ALB'][df['ALB']<0.5]=np.nan
@@ -117,7 +143,7 @@ df.index = pd.to_datetime(df.time)
 
 #%%
 
-t0=datetime(2021, 8, 11) ; t1=datetime(2021, 8, 18)
+t0=datetime(2021, 8, 11,12) ; t1=datetime(2021, 8, 18)
 
 if site=='humboldt':
     t0=datetime(2021, 8, 14,0) ; t1=datetime(2021, 8, 20,0)
@@ -127,52 +153,75 @@ if site=='dye2':
 
 x = df.time
 
-
+leg_char_mult=0.9
 ##%%
 plt.close()
-n_rows=4
+n_rows=5
 fig, ax = plt.subplots(n_rows,1,figsize=(10,18))
 # ---------------------------------------------------------------------------- rainfall
 cc=0
 
 pos="{:.0f}".format(meta.elev[v])+' m, '+"{:.3f}".format(meta.lat[v])+'°N, '+"{:.3f}".format(-meta.lon[v])+'°W'
 print(pos)
-ax[0].set_title(site2+", "+pos)
+mult=0.9
+ax[0].set_title(site2+", "+pos, fontsize=font_size*mult)
 
 mult=1.4
-ax[cc].text(-0.13,1.13,a_or_b,transform=ax[0].transAxes, fontsize=font_size*mult,
+ax[cc].text(-0.13,1.1,a_or_b,transform=ax[0].transAxes, fontsize=font_size*mult,
     verticalalignment='top',rotation=0,color='k', rotation_mode="anchor") 
 # ---------------------------------------------------------------------------- SAT
-for i,nam in enumerate(names[1:5]):
-   print(np.sum(df[nam][t0:t1]>0))
-   print(nam)
-   if i==3:
-       ax[cc].plot(df[nam][t0:t1],
-        drawstyle='steps',
-        linewidth=th*2,label='air temperature, ° C')   
+nam=names[1]
+ax[cc].plot(df[nam][t0:t1],
+ drawstyle='steps',c='r',
+ linewidth=th*2,label='air temperature')
 
-       ax[cc].fill_between(df['time'][t0:t1],df[nam][t0:t1], where=(df[nam][t0:t1] > 0), color='r', alpha=1)
+ax[cc].fill_between(df['time'][t0:t1],df[nam][t0:t1], where=(df[nam][t0:t1] > 0), color='orange', alpha=1)
 
 # ax[cc].set_ylabel('air temperature, ° C', color='k')
 # ax[cc].set_ylim(np.nanmin(x),np.nanmax(x))     
 ax[cc].get_xaxis().set_visible(True)
+ax[cc].set_ylabel('air temperature,\n° C', color='k')
 ax[cc].legend(prop={'size': font_size})
 ax[cc].set_xlim(t0,t1)
 ax[cc].axhline(y=0,linestyle='--',linewidth=th*1.5, color='grey')
-
+ax[cc].legend(prop={'size': font_size*leg_char_mult})
 ax[cc].set_xticklabels([])
+cc+=1
+# ---------------------------------------------------------------------------- RH
+
+nam='RH1'
+ax[cc].plot(df[nam][t0:t1]+2,
+ drawstyle='steps',c='r',
+ linewidth=th*2,label='humidity, lower')
+
+nam='RH2'
+ax[cc].plot(df[nam][t0:t1]+1.,
+ drawstyle='steps',c='b',
+ linewidth=th*2,label='humidity, upper')
+
+ax[cc].set_ylim(80,101)
+ax[cc].get_xaxis().set_visible(True)
+ax[cc].legend(prop={'size': font_size})
+ax[cc].set_xlim(t0,t1)
+ax[cc].axhline(y=0,linestyle='--',linewidth=th*1.5, color='grey')
+ax[cc].legend(prop={'size': font_size*leg_char_mult})
+ax[cc].set_xticklabels([])
+ax[cc].set_ylabel('Relative Humidity,\n%', color='k')
 
 # ---------------------------------------------------------------------------- wind
 cc+=1
 
 ax[cc].plot(df['U1'][t0:t1],
             drawstyle='steps',
-            linewidth=th*2, color='k',label='wind speed, m/s')   
+            linewidth=th*2, color='grey',label='wind speed, lower')   
+ax[cc].plot(df['U2'][t0:t1],
+            drawstyle='steps',
+            linewidth=th*2, color='k',label='wind speed, upper')
 
-ax[cc].set_ylabel('', color='k')
+ax[cc].set_ylabel('m s$^{-1}$', color='k')
 # ax[cc].set_ylim(np.nanmin(x),np.nanmax(x))     
 ax[cc].get_xaxis().set_visible(True)
-ax[cc].legend(prop={'size': font_size})
+ax[cc].legend(prop={'size': font_size*leg_char_mult})
 ax[cc].set_xlim(t0,t1)
 ax[cc].set_xticklabels([])
 
@@ -186,7 +235,8 @@ ax[cc].plot(df['ALB'][t0:t1],
 ax[cc].set_ylabel('', color='k')
 # ax[cc].set_ylim(np.nanmin(x),np.nanmax(x))     
 ax[cc].get_xaxis().set_visible(True)
-ax[cc].legend(prop={'size': font_size})
+ax[cc].legend(prop={'size': font_size*leg_char_mult})
+
 ax[cc].set_xlim(t0,t1)
 ax[cc].set_xticklabels([])
 # ---------------------------------------------------------------------------- SR50
@@ -212,12 +262,11 @@ df.TA2[datetime(2021,8,14):datetime(2021,8,15)]
 SR50[datetime(2021,8,14):datetime(2021,8,15)]
 ax[cc].plot(SR50[t0:t1],
         drawstyle='steps',
-        linewidth=th*2, color='purple',label='surface height, m')
-# ax[cc].set_ylabel('m')
+        linewidth=th*2, color='b',label='surface height')
+ax[cc].set_ylabel('m')
 ax[cc].get_xaxis().set_visible(True)
 
-mult=0.9
-ax[cc].legend(prop={'size': font_size*mult})
+ax[cc].legend(prop={'size': font_size*leg_char_mult})
 ax[cc].set_xlim(t0,t1)
 ax[cc].xaxis.set_major_formatter(mdates.DateFormatter('%d'))
 
@@ -232,7 +281,7 @@ mult=0.8
 ax[cc].text(-0.15,0.0, "day of\nAug.'21",transform=ax[cc].transAxes, fontsize=font_size*mult,
     verticalalignment='top',rotation=0,color=xcolor, rotation_mode="anchor")  
 
-ly='x'
+ly='p'
 
 if ly == 'x':plt.show()
 
@@ -240,6 +289,7 @@ plt_eps=0
 fig_path='./AWS_info/Figs/'
 if ly == 'p':
     plt.savefig(fig_path+site+'.png', bbox_inches='tight', dpi=250)
+    # plt.savefig(fig_path+site+'.png', bbox_inches='tight', dpi=250)
     if plt_eps:
         plt.savefig(fig_path+site+'_'+str(i).zfill(2)+nam+'.eps', bbox_inches='tight')
 

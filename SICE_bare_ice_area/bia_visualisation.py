@@ -11,6 +11,8 @@ import matplotlib.dates as mdates
 import os
 from PIL import Image
 import matplotlib
+import numpy as np
+from scipy import stats
 
 if os.getlogin() == "adrien":
     base_path = "/home/adrien/EO-IO/gitmoved/rain_optics_SICE_AWS"
@@ -132,7 +134,7 @@ for j, varnam in enumerate(varnams):
 
         if year == "2021":
             c0=0.6 ; color=[0,c0,c0]
-            # c0=0.35 ; color=[c0,c0,c0]
+            c0=0.35 ; color=[c0,c0,c0]
             # color='c'
             ax2 = ax.twinx()  # instantiate a second axes that shares the same x-axis
             doy_watson = (

@@ -251,107 +251,110 @@ ax.set_xticks(ticks)
 plt.setp(ax.xaxis.get_majorticklabels(), rotation=90,ha='center')
 ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
 
-ly='x'
+ly='p'
 fig_path='./Figs/'
 fig_path='/Users/jason/Dropbox/rain_optics_SICE_AWS/Watson_catchment/Figs/'
+fig_path='./Figs/'
+fig_path='/Users/jason/Dropbox/rain_optics_SICE_AWS/Figs_GRL/'
 if ly == 'p':
-    plt.savefig(fig_path+'Warson_discharge_2021.png', bbox_inches='tight', dpi=250)
+    plt.savefig(fig_path+'Fig S13 Warson_discharge_2021.pdf', bbox_inches='tight')
+    plt.savefig(fig_path+'Fig S13 Warson_discharge_2021.png', bbox_inches='tight', dpi=250)
 
-#%%calculations
+# #%%calculations
 
-#define start/end of [heatwave, whole discharge season]
-start=[datetime.datetime(2021, 8, 14), datetime.datetime(2021, 5, 1)]
-end=[datetime.datetime(2021, 8, 30), datetime.datetime(2021, 10, 15)]
+# #define start/end of [heatwave, whole discharge season]
+# start=[datetime.datetime(2021, 8, 14), datetime.datetime(2021, 5, 1)]
+# end=[datetime.datetime(2021, 8, 30), datetime.datetime(2021, 10, 15)]
 
-conv=24*3600/10e9 #convert from m3/s into km3
+# conv=24*3600/10e9 #convert from m3/s into km3
 
-df_21=df_2021.copy()
-df_21.reset_index(inplace=True)
-xx=np.zeros((len(df_21)))*np.nan
-xx[29:174]=np.array(piv_mean.to_frame()[0])  #two arrays have different length
-df_21['mean']=xx #add mean do same dataframe 
+# df_21=df_2021.copy()
+# df_21.reset_index(inplace=True)
+# xx=np.zeros((len(df_21)))*np.nan
+# xx[29:174]=np.array(piv_mean.to_frame()[0])  #two arrays have different length
+# df_21['mean']=xx #add mean do same dataframe 
 
-for i in range(len(start)):
-    #define doy of start/end
-    start_doy=start[i].timetuple().tm_yday
-    end_doy=end[i].timetuple().tm_yday
+# for i in range(len(start)):
+#     #define doy of start/end
+#     start_doy=start[i].timetuple().tm_yday
+#     end_doy=end[i].timetuple().tm_yday
     
-    #prepare data
+#     #prepare data
     
-    #filter time range
-    dfnew=df_21.loc[df_21.DOY>=start_doy]
-    dfnew=dfnew.loc[dfnew.DOY<=end_doy]
+#     #filter time range
+#     dfnew=df_21.loc[df_21.DOY>=start_doy]
+#     dfnew=dfnew.loc[dfnew.DOY<=end_doy]
     
-    #calc difference
-    dis=dfnew.to_numpy()*conv
-    dfnew['diff']=dis[:,1]-dis[:,4]
-    # delta=(len(dfnew)-dfnew['WaterFluxDiversOnly(m3/s)'].isna().sum()) #days with measures
+#     #calc difference
+#     dis=dfnew.to_numpy()*conv
+#     dfnew['diff']=dis[:,1]-dis[:,4]
+#     # delta=(len(dfnew)-dfnew['WaterFluxDiversOnly(m3/s)'].isna().sum()) #days with measures
         
-    if i == 0:
-        mass_aug=np.nansum(dis[:,1]-dis[:,4])  #Gt
-    else:
-        mass_21=np.nansum(dis[:,1])#in Gt
-        # delta=(len(dfnew)-dfnew['mean'].isna().sum()) #days with measures
-        mass_avg=np.nansum(dis[:,4]) #in Gt
+#     if i == 0:
+#         mass_aug=np.nansum(dis[:,1]-dis[:,4])  #Gt
+#     else:
+#         mass_21=np.nansum(dis[:,1])#in Gt
+#         # delta=(len(dfnew)-dfnew['mean'].isna().sum()) #days with measures
+#         mass_avg=np.nansum(dis[:,4]) #in Gt
 
 
-print('discharge surplus due to heatwave (Gt): ',mass_aug)
-print('discharge 21 (Gt): ',mass_21)
-print('discharge avg (Gt): ',mass_avg)
-print('ratio HW/21: ',mass_aug/mass_21)
-print('ratio HW/avg: ',mass_aug/mass_avg)
+# print('discharge surplus due to heatwave (Gt): ',mass_aug)
+# print('discharge 21 (Gt): ',mass_21)
+# print('discharge avg (Gt): ',mass_avg)
+# print('ratio HW/21: ',mass_aug/mass_21)
+# print('ratio HW/avg: ',mass_aug/mass_avg)
 
 
-#%% cumulative plot
-fig, ax = plt.subplots(figsize=(9,5))
-plt.plot(np.cumsum(piv_all), color='grey')
-plt.plot(np.cumsum(piv_2), color='r')
-plt.plot(np.cumsum(piv_3), color='darkorange')
-plt.plot(np.cumsum(piv_4), color='b')
-plt.plot(np.cumsum(piv_mean), color='k')
-plt.legend(handles=handles, frameon=False, fontsize=fs)
-ax.axvspan(222, 232,color='grey', alpha=0.3) #label='high melt'
-
-ax.set_ylabel("cumulative discharge, $km^3$", fontsize=fs)
-ax.set_xlabel("time, day/month", fontsize=fs)
-# ax.set_title('Cumulative discharge Watson River')
-
-# plt.legend()
-myFmt = mdates.DateFormatter('%d-%m')
-ax.xaxis.set_major_formatter(myFmt)
-#x-axis
-start_date=datetime.datetime(2021, 5, 5)
-end_date=datetime.datetime(2021, 10, 5)
-ax.set_xlim(start_date.timetuple().tm_yday, end_date.timetuple().tm_yday)
-ticks=[ 134, 151, 165, 181, 195, 212, 226, 243, 257, 273]
-ax.set_xticks(ticks)
-
-plt.setp(ax.xaxis.get_majorticklabels(), rotation=90,ha='center')
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
-
-#%%
-# bb=np.zeros((len(piv_mean),1))*np.nan
-# bb[20:129,]=np.array(np.cumsum(piv_4))  #two arrays have different length
-# kk=np.array(np.cumsum(piv_mean))
-# test=bb[:,0]/kk
-
+# #%% cumulative plot
 # fig, ax = plt.subplots(figsize=(9,5))
-# # plt.plot(bb, color='b')
-# # plt.plot(kk, color='k')
-# plt.plot(test)
+# plt.plot(np.cumsum(piv_all), color='grey')
+# plt.plot(np.cumsum(piv_2), color='r')
+# plt.plot(np.cumsum(piv_3), color='darkorange')
+# plt.plot(np.cumsum(piv_4), color='b')
+# plt.plot(np.cumsum(piv_mean), color='k')
+# plt.legend(handles=handles, frameon=False, fontsize=fs)
+# ax.axvspan(222, 232,color='grey', alpha=0.3) #label='high melt'
 
-# plt.axvline(x=227-129, color='grey', linestyle='--',linewidth=.7)
-# plt.axvline(x=238-129, color='grey', linestyle='--',linewidth=.7)
-# 0.667483 -> 0.808971
+# ax.set_ylabel("cumulative discharge, $km^3$", fontsize=fs)
+# ax.set_xlabel("time, day/month", fontsize=fs)
+# # ax.set_title('Cumulative discharge Watson River')
 
-#%% compared to 1949-2021 average
-fn=base_path+'Watson River discharge yearly (1949-2021).txt'
-data=pd.read_csv(fn, delim_whitespace=True)
-# data=data[data.Year>2005]
-data[data==-999]=np.nan #change -999 to nan
-df=pd.DataFrame(data['Discharge_(km3)'])
-dis= np.array(df)
-mean = np.nanmean(dis)
-diff=dis-mean
-ratio=dis/mean
+# # plt.legend()
+# myFmt = mdates.DateFormatter('%d-%m')
+# ax.xaxis.set_major_formatter(myFmt)
+# #x-axis
+# start_date=datetime.datetime(2021, 5, 5)
+# end_date=datetime.datetime(2021, 10, 5)
+# ax.set_xlim(start_date.timetuple().tm_yday, end_date.timetuple().tm_yday)
+# ticks=[ 134, 151, 165, 181, 195, 212, 226, 243, 257, 273]
+# ax.set_xticks(ticks)
+
+# plt.setp(ax.xaxis.get_majorticklabels(), rotation=90,ha='center')
+# ax.xaxis.set_major_formatter(mdates.DateFormatter('%b %d'))
+
+# #%%
+# # bb=np.zeros((len(piv_mean),1))*np.nan
+# # bb[20:129,]=np.array(np.cumsum(piv_4))  #two arrays have different length
+# # kk=np.array(np.cumsum(piv_mean))
+# # test=bb[:,0]/kk
+
+# # fig, ax = plt.subplots(figsize=(9,5))
+# # # plt.plot(bb, color='b')
+# # # plt.plot(kk, color='k')
+# # plt.plot(test)
+
+# # plt.axvline(x=227-129, color='grey', linestyle='--',linewidth=.7)
+# # plt.axvline(x=238-129, color='grey', linestyle='--',linewidth=.7)
+# # 0.667483 -> 0.808971
+
+# #%% compared to 1949-2021 average
+# fn=base_path+'Watson River discharge yearly (1949-2021).txt'
+# data=pd.read_csv(fn, delim_whitespace=True)
+# # data=data[data.Year>2005]
+# data[data==-999]=np.nan #change -999 to nan
+# df=pd.DataFrame(data['Discharge_(km3)'])
+# dis= np.array(df)
+# mean = np.nanmean(dis)
+# diff=dis-mean
+# ratio=dis/mean
 

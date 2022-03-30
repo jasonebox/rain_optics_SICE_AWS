@@ -10,10 +10,10 @@
 sites=['SWC','CP1','SDM','NSE','NUK_U']
 
 site='CP1'
-# site='SDM'
+site='SDM'
 # site='NSE'
-site='SWC'
-# site='NUK_U'
+# site='SWC'
+site='NUK_U'
 
 import math
 import matplotlib.pyplot as plt
@@ -716,7 +716,8 @@ mult=1.4
 ax[cc].text(-0.13,1.13,a_or_b,transform=ax[0].transAxes, fontsize=font_size*mult,
     verticalalignment='top',rotation=0,color='k', rotation_mode="anchor")  
 
-ax[0].set_title(site2+", "+"{:.0f}".format(elev)+' m, '+"{:.3f}".format(lat)+'°N, '+"{:.3f}".format(abs(lon))+'°W')
+mult=1.2
+ax[0].set_title(site2+", "+"{:.0f}".format(elev)+' m, '+"{:.3f}".format(lat)+'°N, '+"{:.3f}".format(abs(lon))+'°W', fontsize=font_size*mult)
 
 maxes=[]
 nams=['Rain_amount_L','Rain_amount_U','Rain_amount_L_uncorrected','Rain_amount_U_uncorrected']
@@ -966,7 +967,7 @@ if site=='SDM':
     t0_deflation=datetime(2021,8,12,21) ; t1_deflation=datetime(2021,8,17,20)
     ax[4].axvspan(t0_deflation, t1_deflation,color='grey', alpha=0.2,label='snow deflation')
 
-    msg=time_info(t0_snow,t1_snow)
+    # msg=time_info(t0_snow,t1_snow)
     print(site,'snow',msg)
 
 if site=='NUK_U':
